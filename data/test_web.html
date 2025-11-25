@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Brightify Device Control Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .control { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .power-on { background: #4CAF50; color: white; }
+        .power-off { background: #f44336; color: white; }
+        .test { background: #2196F3; color: white; }
+        input[type="range"] { width: 100%; }
+        .log { background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🔆 Brightify Device Control Test</h1>
+    <p><strong>Device ID:</strong> D92F2B14</p>
+    <p><strong>Backend:</strong> http://localhost:8080</p>
+    <p><strong>Endpoint:</strong> /test/v1/devices/D92F2B14/test (No Auth Required)</p>
+    <p><strong>Location:</strong> brightify_mobile/data/backend/</p>
+    <p><strong>Status:</strong> <span id="status" style="color: green;">✅ Ready</span></p>
+    
+    <div class="control">
+        <h3>Power Control</h3>
+        <button class="power-on" onclick="sendCommand({power: true})">🟢 Turn ON</button>
+        <button class="power-off" onclick="sendCommand({power: false})">🔴 Turn OFF</button>
+    </div>
+    
+    <div class="control">
+        <h3>Brightness Control</h3>
+        <input type="range" id="brightness" min="0" max="255" value="128" oninput="updateBrightness(this.value)">
+        <p>Brightness: <span id="brightnessValue">128</span></p>
+        <button class="test" onclick="sendCommand({brightness: parseInt(document.getElementById('brightness').value)})">Set Brightness</button>
+    </div>
+    
+    <div class="control">
+        <h3>Color Control</h3>
+        <button class="test" onclick="sendCommand({red: 255, green: 0, blue: 0})">🔴 Red</button>
+        <button class="test" onclick="sendCommand({red: 0, green: 255, blue: 0})">🟢 Green</button>
+        <button class="test" onclick="sendCommand({red: 0, green: 0, blue: 255})">🔵 Blue</button>
+        <button class="test" onclick="sendCommand({red: 255, green: 255, blue: 255})">⚪ White</button>
+    </div>
+    
+    <div class="control">
+        <h3>Test MQTT</h3>
+        <button class="test" onclick="testMQTT()">🧪 Test MQTT Connection</button>
+    </div>
+    
+    <div class="log" id="log">
+        <strong>Log:</strong><br>
+        Ready to test...
+    </div>
+
+    <script>
+        function updateBrightness(value) {
+            document.getElementById('brightnessValue').innerText = value;
+        }
+        
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<br>[${timestamp}] ${message}`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        async function sendCommand(command) {
+            try {
+                log(`🎮 Sending command: ${JSON.stringify(command)}`);
+                
+                const response = await fetch('http://localhost:8080/test/v1/devices/D92F2B14/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(command)
+                });
+                
+                const result = await response.text();
+                
+                if (response.ok) {
+                    log(`✅ Success: ${result}`);
+                } else {
+                    log(`❌ Error ${response.status}: ${result}`);
+                }
+            } catch (error) {
+                log(`❌ Network Error: ${error.message}`);
+            }
+        }
+        
+        async function testMQTT() {
+            try {
+                log('🧪 Testing backend health...');
+                
+                const response = await fetch('http://localhost:8080/health');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    log(`✅ Backend Health: ${JSON.stringify(result)}`);
+                } else {
+                    log(`❌ Backend Error: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Backend Connection Error: ${error.message}`);
+            }
+        }
+        
+        // Auto-test on load
+        window.onload = function() {
+            setTimeout(testMQTT, 1000);
+        };
+    </script>
+</body>
+</html>
