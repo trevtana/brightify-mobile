@@ -97,15 +97,10 @@ brightify_mobile/
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
-
-MIT License
-
 ## 👤 Author
 
-Your Name - [Your GitHub](https://github.com/yourusername)
+Arkan Ardiansyah - [trevtana](https://github.com/yourusername)
 
 ## 🔗 Related Repositories
 
-- [Brightify Web](https://github.com/yourusername/brightify-web) - Web dashboard
-- [Brightify Controller](https://github.com/yourusername/brightify-controller) - ESP32 firmware
+- [Brightify Web](https://github.com/trevtaba/brightify-web) - Web dashboard
