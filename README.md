@@ -103,4 +103,4 @@ Arkan Ardiansyah - [trevtana](https://github.com/yourusername)
 
 ## 🔗 Related Repositories
 
-- [Brightify Web](https://github.com/trevtaba/brightify-web) - Web dashboard
+- [Brightify Web](https://github.com/trevtana/brightify-web) - Web dashboard
